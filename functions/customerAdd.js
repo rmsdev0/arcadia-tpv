@@ -13,9 +13,13 @@ exports.handler = async function(context, event, callback) {
     console.log("connected", config);
     try {
         const db = new Database(config);
-
         db.connection.connect();
-        const users = await db.query("select * from users");
+        const user = {
+            phone_number: "+12222222222",
+            first_name: "John",
+            last_name: "Doe"
+        };
+        const users = await db.query("insert into users set ?", user);
         await db.close();
         console.log(users);
         callback(null, users);
