@@ -22,7 +22,7 @@ exports.handler = async function(context, event, callback) {
             console.log('valid token ', event.token)
             console.log('env token ', context.vaildator)
             console.log('token eval')
-            if (event.token === context.vaildator) {
+            if (event.token === context.validator) {
             const db = new Database(config);
             db.connection.connect();
             const prospect_record = {
