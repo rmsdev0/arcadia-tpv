@@ -2,6 +2,7 @@ const mysql = require("mysql");
 
 exports.handler = async function(context, event, callback) {
     context.callbackWaitsForEmptyEventLoop = false;
+    const response = new Twilio.Response()
     const config = {
         host: context.host,
         port: context.port,
@@ -19,6 +20,16 @@ exports.handler = async function(context, event, callback) {
         const users = await db.query(`select * from prospect_records where customer_phone=${event.from}`);
         await db.close();
         console.log("lookup results", users);
+
+        if (Object.keys(users).length === 0){
+            // no customer found
+            console.log('no customer found')
+            response.setStatusCode(405)
+            response.setBody('no customer found')
+            callback(null, response)
+        }
+        // customer found
+        console.log('customer found')
         callback(null, users);
     } catch (e) {
         callback(e);
