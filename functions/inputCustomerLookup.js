@@ -7,6 +7,8 @@ exports.handler = async function(context, event, callback) {
 
     if (event.lookup_type === "phone"){
         searchParam = "customer_phone";
+        searchValue = "+1".concat(searchValue)
+        console.log('updated search value ', searchValue)
 
     }else if(event.lookup_type === "utility"){
         searchParam = "utility_account_number";
@@ -23,6 +25,9 @@ exports.handler = async function(context, event, callback) {
 
     console.log("connected", config);
     console.log('event ', event)
+    console.log('secondary search')
+    console.log('param ', searchParam)
+    console.log('value ', searchValue)
     try {
         const db = new Database(config);
 
