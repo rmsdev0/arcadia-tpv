@@ -8,7 +8,7 @@ exports.handler = async function(context, event, callback) {
     if (event.lookup_type === "phone"){
         searchParam = "customer_phone";
         searchValue = "+1".concat(searchValue)
-        console.log('updated search value ', searchValue)
+        // todo remove - what is the incoming phone format going to be? Preference -> +15551234567
 
     }else if(event.lookup_type === "utility"){
         searchParam = "utility_account_number";
@@ -28,6 +28,7 @@ exports.handler = async function(context, event, callback) {
     console.log('secondary search')
     console.log('param ', searchParam)
     console.log('value ', searchValue)
+
     try {
         const db = new Database(config);
 
@@ -43,8 +44,9 @@ exports.handler = async function(context, event, callback) {
             callback(null, response)
         }
 
-        callback(null, users);
+        callback(null, JSON.parse(JSON.stringify(users[0])));
     } catch (e) {
+        console.log('db lookup error ', e);
         callback(e);
     }
 };
