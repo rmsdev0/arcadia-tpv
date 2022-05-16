@@ -11,6 +11,11 @@ exports.handler = async function(context, event, callback) {
         database: context.database
     };
 
+    function numberString(inNum){
+        fString = inNum.split('').join(' ')
+        return fString
+    }
+
     console.log("connected", config);
     console.log('event ', event);
 
@@ -20,7 +25,6 @@ exports.handler = async function(context, event, callback) {
         db.connection.connect();
         const users = await db.query(`select * from prospect_records where customer_phone=${event.from}`);
         await db.close();
-        callback(null, JSON.parse(JSON.stringify(users[0])));
 
         if (Object.keys(users).length === 0){
             // no customer found
@@ -31,7 +35,10 @@ exports.handler = async function(context, event, callback) {
         }
         // customer found
         console.log('customer found')
-        callback(null, users);
+        let prospectRecords = JSON.parse(JSON.stringify(users[0]))
+        prospectRecords.format_phone = numberString(prospectRecords.customer_phone)
+        prospectRecords.format_reference = numberString(prospectRecords.utility_account_number)
+        callback(null, prospectRecords);
     } catch (e) {
         console.log('db lookup error ', e)
         callback(e);
