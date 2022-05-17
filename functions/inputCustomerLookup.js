@@ -23,11 +23,12 @@ exports.handler = async function(context, event, callback) {
         database: context.database
     };
 
+    function numberString(inNum){
+        fString = inNum.split('').join(' ')
+        return fString
+    }
+
     console.log("connected", config);
-    console.log('event ', event)
-    console.log('secondary search')
-    console.log('param ', searchParam)
-    console.log('value ', searchValue)
 
     try {
         const db = new Database(config);
@@ -42,9 +43,15 @@ exports.handler = async function(context, event, callback) {
             response.setStatusCode(405)
             response.setBody('no customer found2')
             callback(null, response)
+
+        }else {
+            // customer found
+            let prospectRecords = JSON.parse(JSON.stringify(users[0]))
+            prospectRecords.format_phone = numberString(prospectRecords.customer_phone)
+            prospectRecords.format_reference = numberString(prospectRecords.utility_account_number)
+            callback(null, prospectRecords);
         }
 
-        callback(null, JSON.parse(JSON.stringify(users[0])));
     } catch (e) {
         console.log('db lookup error ', e);
         callback(e);
