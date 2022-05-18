@@ -1,35 +1,51 @@
 exports.handler = async function(context, event, callback) {
+    const axios = require("axios");
 
-    const from = event.From;
+    console.log('response eval ', event)
     let response = new Twilio.Response();
 
     let outgoingUrl = 'https://hooks.zapier.com/hooks/catch/133054/bkr6rae'
-    let testUrl = ""
+    let testUrl = "https://377d-2601-446-680-b8a0-14d5-95e2-cd2e-2e48.ngrok.io"
     const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Recordings/${event.recording_sid}`
-    console.log('response eval ', event)
 
-    ivrResponses = [event.resp_a, event.resp_b, event.resp_c, event.resp_d, event.resp_e, event.resp_f, event.resp_i]
+    const ivrResponses = [event.resp_a, event.resp_b, event.resp_c, event.resp_d, event.resp_e, event.resp_f, event.resp_i]
+    const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep']
+    const negativeResponses = ['no', 'not', 'cancel', 'i don’t want this', 'i do not understand', 'stop']
 
-    const positiveResponses = ['Yes', 'Yeah', 'Ya', 'Correct', 'Yup', 'Yep']
-    const negativeResponses = ['No', 'Not', 'Cancel', 'I don’t want this', 'I do not understand', 'stop']
+    function trimResponse (customerResp){
+        console.log('resp 1 ', customerResp)
+        const removePeriod = customerResp.replace(".", '')
+        const trimString = removePeriod.replace(/\s/g, '')
 
+        return trimString.toLowerCase()
 
+    }
+
+    // generate date
+    let date = new Date()
+    let day = date.getDate();
+    let month = date.getMonth()+1;
+    let year = date.getFullYear();
+    let fullDate = `${month}-${day}-${year}`;
+
+    // evaluate responses and set status
     async function evalResponses(){
-        // evaluate responses and set status
+
         let posVal = 0
         let negVal = 0
         let nutVal = 0
         let statusVal = null
 
-        for (let i = 0; i < ivrResponses.length; i++) {
-            if(positiveResponses.includes(i)){
+        ivrResponses.forEach(resp => {
+            console.log('resp ', resp)
+            if(positiveResponses.includes(trimResponse(resp))){
                 posVal += 1
-            }else if(negativeResponses.includes(i)){
+            }else if(negativeResponses.includes(trimResponse(resp))){
                 negVal += 1
             }else{
                 nutVal += 1
             }
-        }
+        });
 
         if (posVal === ivrResponses.length){
             statusVal = "Good Sale"
@@ -39,7 +55,7 @@ exports.handler = async function(context, event, callback) {
             statusVal = "Needs Review"
         }
 
-        return status_val
+        return statusVal
     }
 
     const getStatus = await evalResponses()
@@ -53,16 +69,23 @@ exports.handler = async function(context, event, callback) {
             last_name: event.last_name,
             rep_phone: event.rep_phone,
             billing_type: event.billing_type,
-            staus: getStatus,
-            recording_link: recordingUrl
+            status: getStatus,
+            recording_link: recordingUrl,
+            recording_sid: event.recording_sid,
+            call_sid: event.call_sid,
+            reference_number: event.reference_number,
+            date: fullDate
         },
     };
-
+    console.log('params ', config)
     let custData = await axios
-        .post(testUrl, config)
+        .post(outgoingUrl, config)
         .then((response) => {
             return response.data;
         })
+
+    // do we need to check if the post was successful?
+    console.log('cust data', custData)
 
     response.setStatusCode(200)
     callback(null, response);
