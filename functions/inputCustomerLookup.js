@@ -46,7 +46,7 @@ exports.handler = async function(context, event, callback) {
 
         }else {
             // customer found
-            let prospectRecords = JSON.parse(JSON.stringify(users[0]))
+            let prospectRecords = JSON.parse(JSON.stringify(users[users.length - 1]))
             prospectRecords.format_phone = numberString(prospectRecords.customer_phone)
             prospectRecords.format_reference = numberString(prospectRecords.utility_account_number)
             callback(null, prospectRecords);
