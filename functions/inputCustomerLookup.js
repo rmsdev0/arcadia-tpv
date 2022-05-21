@@ -7,7 +7,7 @@ exports.handler = async function(context, event, callback) {
 
     if (event.lookup_type === "phone"){
         searchParam = "customer_phone";
-        searchValue = "+1".concat(searchValue)
+        // searchValue = "+1".concat(searchValue)
         // todo remove - what is the incoming phone format going to be? Preference -> +15551234567
 
     }else if(event.lookup_type === "reference"){

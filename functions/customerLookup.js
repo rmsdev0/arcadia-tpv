@@ -23,7 +23,7 @@ exports.handler = async function(context, event, callback) {
         const db = new Database(config);
 
         db.connection.connect();
-        const users = await db.query(`select * from prospect_records where customer_phone=${event.from}`);
+        const users = await db.query(`select * from prospect_records where customer_phone=${event.from.substring(2)}`);
         await db.close();
 
         if (Object.keys(users).length === 0){
