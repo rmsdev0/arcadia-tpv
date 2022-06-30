@@ -52,7 +52,7 @@ exports.handler = async function(context, event, callback) {
         }else if(negVal > 0){
             statusVal = "No Sale"
         }else{
-            statusVal = "Needs Review"
+            statusVal = "In Review"
         }
 
         return statusVal
