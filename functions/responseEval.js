@@ -10,7 +10,7 @@ exports.handler = async function(context, event, callback) {
     const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Recordings/${event.recording_sid}`
 
     const ivrResponses = [event.resp_a, event.resp_b, event.resp_c, event.resp_d, event.resp_e, event.resp_f, event.resp_i]
-    const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep']
+    const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep', 'ps', 'cs', 'if?', 'i understand', 'cf', 'right', 'cvs']
     const negativeResponses = ['no', 'not', 'cancel', 'i don’t want this', 'i do not understand', 'stop']
 
     function trimResponse (customerResp){
