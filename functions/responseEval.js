@@ -5,6 +5,7 @@ exports.handler = async function(context, event, callback) {
     let response = new Twilio.Response();
 
     let outgoingUrl = 'https://hooks.zapier.com/hooks/catch/133054/bkr6rae'
+    // todo remove testUrl
     let testUrl = "https://377d-2601-446-680-b8a0-14d5-95e2-cd2e-2e48.ngrok.io"
     const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Recordings/${event.recording_sid}`
 
@@ -74,7 +75,8 @@ exports.handler = async function(context, event, callback) {
             recording_sid: event.recording_sid,
             call_sid: event.call_sid,
             reference_number: event.reference_number,
-            date: fullDate
+            date: fullDate,
+            ivr_responses: ivrResponses
         },
     };
     console.log('params ', config)
