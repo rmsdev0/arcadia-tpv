@@ -5,21 +5,21 @@ exports.handler = async function(context, event, callback) {
     let response = new Twilio.Response();
 
     let outgoingUrl = 'https://hooks.zapier.com/hooks/catch/133054/bkr6rae'
-    // todo remove testUrl
-    let testUrl = "https://377d-2601-446-680-b8a0-14d5-95e2-cd2e-2e48.ngrok.io"
     const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Recordings/${event.recording_sid}`
 
     const ivrResponses = [event.resp_a, event.resp_b, event.resp_c, event.resp_d, event.resp_e, event.resp_f, event.resp_i]
-    const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep', 'ps', 'cs', 'if?', 'i understand', 'cf', 'right', 'cvs']
+    const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep', 'ps', 'cs', 'if?', 'i understand', 'cf', 'right',
+                               'cvs', 'cbs', 'cia', 'ta', 'oh yeah', 'confirm', 'current', 'correct', 'i understand', 'i do',
+                               'it is', 'right', 'correct yes', 'yes correct', 'yes yes']
+
     const negativeResponses = ['no', 'not', 'cancel', 'i don’t want this', 'i do not understand', 'stop']
 
     function trimResponse (customerResp){
         console.log('resp 1 ', customerResp)
-        const removePeriod = customerResp.replace(".", '')
+        const removeComma = customerResp.replace(",", '')
+        const removePeriod = removeComma.replace(".", '')
         const trimString = removePeriod.replace(/\s/g, '')
-
         return trimString.toLowerCase()
-
     }
 
     // generate date
@@ -79,7 +79,6 @@ exports.handler = async function(context, event, callback) {
             ivr_responses: ivrResponses
         },
     };
-    console.log('params ', config)
     let custData = await axios
         .post(outgoingUrl, config)
         .then((response) => {
