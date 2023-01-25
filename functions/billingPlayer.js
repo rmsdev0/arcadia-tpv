@@ -2,12 +2,20 @@ exports.handler = async function(context, event, callback) {
 
     const billingSegment = event.segment;
     let billingCode = event.billing_code;
+    const language = event.language
 
     console.log('Billing Player ES', event)
     console.log(event.billing_code)
 
     //default billing url?
     let resolvedUrl = null
+
+    const flowUrls = {
+        'en': 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FW23c12afaf7cce3a7f198e3d93f5c5204?FlowEvent=return',
+        'es': 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FWfd89f076696ea58590c85462d2bce9af?FlowEvent=return'
+    }
+
+    let studioFlow = flowUrls['en']
 
     const billingUrls = {
 
@@ -47,8 +55,9 @@ exports.handler = async function(context, event, callback) {
 
     if (billingCode){
 
-        if (event.language){
-            billingCode = billingCode.concat(event.language);
+        if (language){
+            billingCode = billingCode.concat(language);
+            studioFlow = flowUrls[language]
         }
         const trimmedCode = billingCode.replace(/\s/g, '');
         resolvedUrl = billingUrls[trimmedCode][billingSegment];
@@ -63,7 +72,7 @@ exports.handler = async function(context, event, callback) {
 
     response.redirect({
         method: 'POST'
-    }, 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FW23c12afaf7cce3a7f198e3d93f5c5204?FlowEvent=return');
+    }, studioFlow);
 
     callback(null, response);
 
