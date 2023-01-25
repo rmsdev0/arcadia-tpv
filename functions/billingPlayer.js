@@ -1,10 +1,9 @@
 exports.handler = async function(context, event, callback) {
 
     const billingSegment = event.segment;
-    const billingCode = event.billing_code;
-    const trimmedCode = event.billing_code.replace(/\s/g, '')
+    let billingCode = event.billing_code;
 
-    console.log('Billing Player ', event)
+    console.log('Billing Player ES', event)
     console.log(event.billing_code)
 
     //default billing url?
@@ -27,14 +26,33 @@ exports.handler = async function(context, event, callback) {
         "DUAL": {
             "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/DUAL+Part+1.mp3",
             "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/DUAL+Part+2.mp3"
+        },
+        "UCBes": {
+            "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_UCB_Part_1.mp3",
+            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_UCB_Part_2.mp3"
+        },
+        "ACBes": {
+            "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_ACB_Part_1.mp3",
+            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_ACB_Part_2.mp3"
+        },
+        "ACBSOes": {
+            "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_ACB_SO_Part_1.mp3",
+            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_ACB_SO_Part_2.mp3"
+        },
+        "DUALes": {
+            "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_DUAL_Part_1.mp3",
+            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_DUAL_Part_2.mp3"
         }
     }
 
     if (billingCode){
 
-        resolvedUrl = billingUrls[trimmedCode][billingSegment]
-        console.log('returned url ', resolvedUrl)
-
+        if (event.language){
+            billingCode = billingCode.concat(event.language);
+        }
+        const trimmedCode = billingCode.replace(/\s/g, '');
+        resolvedUrl = billingUrls[trimmedCode][billingSegment];
+        console.log('returned url ', resolvedUrl);
     }
 
     const response = new Twilio.twiml.VoiceResponse();
