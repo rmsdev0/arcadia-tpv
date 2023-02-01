@@ -41,9 +41,6 @@ exports.handler = async function(context, event, callback) {
     const negativeResponses = extractResponses(getNegativeResponses);
     await db.close();
 
-    console.log('pos list ', positiveResponses)
-    console.log('neg list ', negativeResponses)
-
     function trimResponse (customerResp){
         console.log('resp 1 ', customerResp)
         const removeComma = customerResp.replace(",", '')
