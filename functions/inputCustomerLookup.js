@@ -28,15 +28,12 @@ exports.handler = async function(context, event, callback) {
         return fString
     }
 
-    console.log("connected", config);
-
     try {
         const db = new Database(config);
 
         db.connection.connect();
         const users = await db.query(`select * from prospect_records where ${searchParam}=${searchValue}`);
         await db.close();
-        console.log("lookup results", users);
 
         if (Object.keys(users).length === 0) {
             // no customer found

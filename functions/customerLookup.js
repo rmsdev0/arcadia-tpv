@@ -16,9 +16,6 @@ exports.handler = async function(context, event, callback) {
         return fString
     }
 
-    console.log("connected", config);
-    console.log('event ', event);
-
     try {
         const db = new Database(config);
 
@@ -34,7 +31,6 @@ exports.handler = async function(context, event, callback) {
             callback(null, response)
         }
         // customer found
-        console.log('customer found')
         let prospectRecords = JSON.parse(JSON.stringify(users[users.length - 1]))
         prospectRecords.format_phone = numberString(prospectRecords.customer_phone)
         prospectRecords.format_reference = numberString(prospectRecords.utility_account_number)

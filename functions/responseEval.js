@@ -1,8 +1,6 @@
 const mysql = require("mysql");
 exports.handler = async function(context, event, callback) {
     const axios = require("axios");
-
-    console.log('response eval ', event)
     let response = new Twilio.Response();
 
     let outgoingUrl = 'https://hooks.zapier.com/hooks/catch/133054/bkr6rae'
@@ -42,7 +40,6 @@ exports.handler = async function(context, event, callback) {
     await db.close();
 
     function trimResponse (customerResp){
-        console.log('resp 1 ', customerResp)
         const removeComma = customerResp.replace(",", '')
         const removePeriod = removeComma.replace(".", '')
         const trimString = removePeriod.replace(/\s/g, '')
@@ -65,7 +62,6 @@ exports.handler = async function(context, event, callback) {
         let statusVal = null
 
         ivrResponses.forEach(resp => {
-            console.log('resp ', resp)
             if(positiveResponses.includes(trimResponse(resp))){
                 posVal += 1
             }else if(negativeResponses.includes(trimResponse(resp))){

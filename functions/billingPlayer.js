@@ -57,7 +57,6 @@ exports.handler = async function(context, event, callback) {
         }
         const trimmedCode = billingCode.replace(/\s/g, '');
         resolvedUrl = billingUrls[trimmedCode][billingSegment];
-        console.log('returned url ', resolvedUrl);
     }
 
     const response = new Twilio.twiml.VoiceResponse();

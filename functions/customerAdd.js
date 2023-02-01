@@ -1,11 +1,6 @@
 const mysql = require("mysql");
 
 exports.handler = async function(context, event, callback) {
-        console.log('debug customer add called ')
-        // todo how are we going to validate this request.
-        console.log('debug eval token ', event.token)
-        console.log('debug event ', event)
-
         context.callbackWaitsForEmptyEventLoop = false;
 
         const config = {
@@ -20,9 +15,6 @@ exports.handler = async function(context, event, callback) {
         console.log(" debug connecting ", config);
 
         try {
-            console.log('valid token ', event.token)
-            console.log('env token ', context.vaildator)
-            console.log('token eval')
             if (event.token === context.validator) {
             const db = new Database(config);
             db.connection.connect();
@@ -41,7 +33,6 @@ exports.handler = async function(context, event, callback) {
             };
             const users = await db.query("insert into prospect_records set ?", prospect_record);
             await db.close();
-            console.log("debug save complete ", users);
 
             response.setStatusCode(200);
             response.setBody('success')
@@ -50,7 +41,6 @@ exports.handler = async function(context, event, callback) {
             }else{
                 response.setStatusCode(403);
                 response.setBody("invalid token ")
-                console.log('invalid token ', event.token)
                 callback(null, response);
             }
 
