@@ -4,9 +4,6 @@ exports.handler = async function(context, event, callback) {
     let billingCode = event.billing_code;
     const language = event.language
 
-    console.log('Billing Player', event)
-    console.log(event.billing_code)
-
     //default billing url?
     let resolvedUrl = null
 
@@ -74,5 +71,4 @@ exports.handler = async function(context, event, callback) {
     }, studioFlow);
 
     callback(null, response);
-
 };

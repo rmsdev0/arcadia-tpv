@@ -4,6 +4,7 @@ exports.handler = async function(context, event, callback) {
         console.log('debug customer add called ')
         // todo how are we going to validate this request.
         console.log('debug eval token ', event.token)
+        console.log('debug event ', event)
 
         context.callbackWaitsForEmptyEventLoop = false;
 
@@ -54,13 +55,10 @@ exports.handler = async function(context, event, callback) {
             }
 
         } catch (e) {
-
             response.setStatusCode(501);
             response.setBody("error adding record")
-
             callback(e, response);
         }
-
 };
 
 class Database {

@@ -1,3 +1,4 @@
+const mysql = require("mysql");
 exports.handler = async function(context, event, callback) {
     const axios = require("axios");
 
@@ -8,11 +9,40 @@ exports.handler = async function(context, event, callback) {
     const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Recordings/${event.recording_sid}`
 
     const ivrResponses = [event.resp_a, event.resp_b, event.resp_c, event.resp_d, event.resp_e, event.resp_f, event.resp_i]
-    const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep', 'ps', 'cs', 'if?', 'i understand', 'cf', 'right',
-                               'cvs', 'cbs', 'cia', 'ta', 'oh yeah', 'confirm', 'current', 'correct', 'i understand', 'i do',
-                               'it is', 'right', 'correct yes', 'yes correct', 'yes yes']
+    // todo remove old response lists after comfortable with db-list performance
+    // const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep', 'ps', 'cs', 'if?', 'i understand', 'cf', 'right',
+    //                            'cvs', 'cbs', 'cia', 'ta', 'oh yeah', 'confirm', 'current', 'correct', 'i understand', 'i do',
+    //                            'it is', 'right', 'correct yes', 'yes correct', 'yes yes']
 
-    const negativeResponses = ['no', 'not', 'cancel', 'i don’t want this', 'i do not understand', 'stop']
+    // const negativeResponses = ['no', 'not', 'cancel', 'i don’t want this', 'i do not understand', 'stop']
+
+    // get positive and negative response lists from the db
+    function extractResponses(dbList){
+        let respList = []
+        dbList.forEach(element => {
+            respList.push(element.name)
+        });
+        return respList
+    }
+
+    const dbConfig = {
+        host: context.host,
+        port: context.port,
+        user: context.user,
+        password: context.password,
+        database: context.database
+    };
+
+    const db = new Database(dbConfig);
+    db.connection.connect();
+    const getPositiveResponses = await db.query(`select * from responses where affirmative=1`);
+    const getNegativeResponses = await db.query(`select * from responses where affirmative=0`);
+    const positiveResponses = extractResponses(getPositiveResponses);
+    const negativeResponses = extractResponses(getNegativeResponses);
+    await db.close();
+
+    console.log('pos list ', positiveResponses)
+    console.log('neg list ', negativeResponses)
 
     function trimResponse (customerResp){
         console.log('resp 1 ', customerResp)
@@ -91,3 +121,25 @@ exports.handler = async function(context, event, callback) {
     response.setStatusCode(200)
     callback(null, response);
 };
+
+class Database {
+    constructor(config) {
+        this.connection = mysql.createConnection(config);
+    }
+    query(sql, args) {
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, args, (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);
+            });
+        });
+    }
+    close() {
+        return new Promise((resolve, reject) => {
+            this.connection.end(err => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+    }
+}
