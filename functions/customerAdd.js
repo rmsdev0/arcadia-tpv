@@ -12,7 +12,6 @@ exports.handler = async function(context, event, callback) {
         };
 
         let response = new Twilio.Response();
-        console.log(" debug connecting ", config);
 
         try {
             if (event.token === context.validator) {
