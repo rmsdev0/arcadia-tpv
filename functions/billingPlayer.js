@@ -2,7 +2,7 @@ exports.handler = async function(context, event, callback) {
 
     const billingSegment = event.segment;
     let billingCode = event.billing_code;
-    const language = event.language
+    const language = event.language;
 
     //default billing url?
     let resolvedUrl = null
@@ -47,6 +47,10 @@ exports.handler = async function(context, event, callback) {
         "DUALes": {
             "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_DUAL_Part_1.mp3",
             "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_DUAL_Part_2.mp3"
+        },
+        "HUCBSO": {
+            "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+SO+Part+1.mp3",
+            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+SO+Part+2.mp3"
         }
     }
 

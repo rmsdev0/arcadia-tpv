@@ -6,13 +6,11 @@ exports.handler = async function(context, event, callback) {
     let outgoingUrl = 'https://hooks.zapier.com/hooks/catch/133054/bkr6rae'
     const recordingUrl = `https://api.twilio.com/2010-04-01/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Recordings/${event.recording_sid}`
 
+    // All responses captured by the IVR
     const ivrResponses = [event.resp_a, event.resp_b, event.resp_c, event.resp_d, event.resp_e, event.resp_f, event.resp_i]
-    // todo remove old response lists after comfortable with db-list performance
-    // const positiveResponses = ['yes', 'yeah', 'ya', 'correct', 'yup', 'yep', 'ps', 'cs', 'if?', 'i understand', 'cf', 'right',
-    //                            'cvs', 'cbs', 'cia', 'ta', 'oh yeah', 'confirm', 'current', 'correct', 'i understand', 'i do',
-    //                            'it is', 'right', 'correct yes', 'yes correct', 'yes yes']
 
-    // const negativeResponses = ['no', 'not', 'cancel', 'i don’t want this', 'i do not understand', 'stop']
+    // IVR responses to be evaluated,
+    const requiredResponses = [event.resp_e, event.resp_f, event.resp_i]
 
     // get positive and negative response lists from the db
     function extractResponses(dbList){
@@ -61,7 +59,7 @@ exports.handler = async function(context, event, callback) {
         let nutVal = 0
         let statusVal = null
 
-        ivrResponses.forEach(resp => {
+        requiredResponses.forEach(resp => {
             if(positiveResponses.includes(trimResponse(resp))){
                 posVal += 1
             }else if(negativeResponses.includes(trimResponse(resp))){
@@ -71,7 +69,7 @@ exports.handler = async function(context, event, callback) {
             }
         });
 
-        if (posVal === ivrResponses.length){
+        if (posVal === requiredResponses.length){
             statusVal = "Good Sale"
         }else if(negVal > 0){
             statusVal = "No Sale"
