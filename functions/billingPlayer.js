@@ -48,7 +48,7 @@ exports.handler = async function(context, event, callback) {
             "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_DUAL_Part_1.mp3",
             "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/Spanish/STPV_DUAL_Part_2.mp3"
         },
-        "HUCBSO": {
+        "UCBSO": {
             "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+SO+Part+1.mp3",
             "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+SO+Part+2.mp3"
         },
