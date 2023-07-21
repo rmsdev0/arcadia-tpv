@@ -1,8 +1,9 @@
 exports.handler = async function(context, event, callback) {
 
-    const billingSegment = event.segment;
     let billingCode = event.billing_code;
+    const billingSegment = event.segment;
     const language = event.language;
+    const scriptType = event.script_type;
 
     //default billing url?
     let resolvedUrl = null
@@ -63,6 +64,9 @@ exports.handler = async function(context, event, callback) {
         if (language){
             billingCode = billingCode.concat(language);
             studioFlow = flowUrls[language];
+        }
+        if (scriptType){
+            studioFlow = flowUrls[scriptType]
         }
         const trimmedCode = billingCode.replace(/\s/g, '');
         resolvedUrl = billingUrls[trimmedCode][billingSegment];
