@@ -52,7 +52,7 @@ exports.handler = async function(context, event, callback) {
         },
         "UCBSO": {
             "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+SO+Part+1.mp3",
-            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+SO+Part+2.mp3"
+            "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/IL+ONLY+UCB+Part+2.mp3"
         },
         "CWDUAL": {
             "p1": "https://clearwaytpv.s3.amazonaws.com/Clearway+TPV+DUAL+Part+1.mp3",
