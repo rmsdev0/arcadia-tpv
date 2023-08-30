@@ -84,7 +84,6 @@ exports.handler = async function(context, event, callback) {
         }else{
             statusVal = "In Review"
         }
-
         return statusVal
     }
 
