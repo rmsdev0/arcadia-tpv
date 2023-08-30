@@ -59,6 +59,7 @@ exports.handler = async function(context, event, callback) {
         let nutVal = 0
         let statusVal = null
 
+        // eval required responses
         requiredResponses.forEach(resp => {
             if(positiveResponses.includes(trimResponse(resp))){
                 posVal += 1
@@ -66,6 +67,13 @@ exports.handler = async function(context, event, callback) {
                 negVal += 1
             }else{
                 nutVal += 1
+            }
+        });
+
+        // eval required responses
+        ivrResponses.forEach(resp => {
+            if(negativeResponses.includes(trimResponse(resp))){
+                negVal += 1
             }
         });
 
