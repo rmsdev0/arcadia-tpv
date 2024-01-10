@@ -61,8 +61,6 @@ exports.handler = async function(context, event, callback) {
         }
     }
 
-    // todo remove old ucb billing url "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+Part+2.mp3"
-
     if (billingCode){
         if (language){
             billingCode = billingCode.concat(language);

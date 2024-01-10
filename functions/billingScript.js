@@ -8,7 +8,7 @@ exports.handler = async function(context, event, callback) {
 
             "UCB": {
                 "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+Part+1.mp3",
-                "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/2024+IL+ONLY+UCB+Part+2.mp3"
+                "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+Part+2.mp3"
             },
             "ACB": {
                 "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/H+ACB+Part+1.mp3",
@@ -28,6 +28,5 @@ exports.handler = async function(context, event, callback) {
         response.setBody(JSON.stringify(billingUrls[trimmedCode]))
         callback(null, response);
     }
-    // todo remove old ucb part 2 url "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+Part+2.mp3"
     // no billing code, do we also need to check if the billing code is valid and return a generic billing script here if not found.
 };
