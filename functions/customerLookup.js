@@ -25,7 +25,6 @@ exports.handler = async function(context, event, callback) {
 
         if (Object.keys(users).length === 0){
             // no customer found
-            console.log('no customer found')
             response.setStatusCode(405)
             response.setBody('no customer found')
             callback(null, response)
