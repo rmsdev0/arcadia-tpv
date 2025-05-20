@@ -2,9 +2,10 @@
  *  create-call.js
  *
  *  This function:
- *   - Accepts phone, studio_flow, token via event parameters
+ *   - Accepts phone, studio_flow, token, and optionally fromNumber via event parameters
  *   - Validates token against context.VALIDATOR
  *   - If valid, initiates an outbound call to `phone`
+ *   - Uses `fromNumber` if provided, otherwise falls back to `context.TWILIO_NUMBER`
  *   - Says a greeting, then redirects to the given Studio Flow
  *   - Returns a success or error response as JSON
  */
@@ -16,12 +17,12 @@ exports.handler = async function (context, event, callback) {
     // Create a new Twilio Response
     const response = new Twilio.Response();
 
-    // Let’s make sure we return JSON in all cases
+    // Ensure we return JSON in all cases
     response.appendHeader('Content-Type', 'application/json');
 
     try {
-        // 1. Validate the token
-        const { phone, studio_flow, token } = event;
+        // Validate the token
+        const { phone, studio_flow, token, fromNumber } = event;
 
         if (!phone || !studio_flow || !token) {
             response.setStatusCode(400);
@@ -42,21 +43,25 @@ exports.handler = async function (context, event, callback) {
             return callback(null, response);
         }
 
-        // 2. Token is valid, so create an outbound call
+        // Token is valid; prepare to create an outbound call
         const client = context.getTwilioClient();
+
+        // Determine which number to use as 'from'
+        const effectiveFromNumber = fromNumber && fromNumber.trim() !== ''
+            ? fromNumber
+            : context.TWILIO_NUMBER; // todo this needs to be added in Twilio
 
         /**
          *  We will use inline TwiML to:
-         *    - <Say>/<play> a greeting
+         *    - <Say> a greeting
          *    - <Redirect> to the Studio Flow
          *
          *  The Studio Flow can be addressed by the URL pattern:
          *    https://webhooks.twilio.com/v1/Accounts/{AccountSid}/Flows/{FlowSid}
          *
-         *  The 'FlowEvent=return' or 'FlowEvent=callComplete' can vary based
-         *  on how you wish to enter your flow. Often, 'FlowEvent=return' is used.
+         *  We added "&fromEndpoint=true" so that the Studio Flow can know
+         *  this call is coming from your custom endpoint if desired.
          */
-
         const twiml = `
       <Response>
         <Say>This is an automated call from Arcadia Energy. Please hold while we connect you.</Say>
@@ -67,7 +72,7 @@ exports.handler = async function (context, event, callback) {
         // Create the call
         const call = await client.calls.create({
             to: phone,
-            from: context.TWILIO_NUMBER,
+            from: effectiveFromNumber,
             twiml: twiml
         });
 
@@ -76,6 +81,7 @@ exports.handler = async function (context, event, callback) {
         response.setBody({
             status: 'success',
             callSid: call.sid,
+            fromNumber: effectiveFromNumber,
             message: 'Outbound call initiated successfully.'
         });
         return callback(null, response);
