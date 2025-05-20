@@ -30,7 +30,7 @@ exports.handler = async function (context, event, callback) {
             return callback(null, response);
         }
 
-        if (token !== context.valildator) {
+        if (token !== context.validator) {
             // Unauthorized
             response.setStatusCode(403);
             response.setBody({
