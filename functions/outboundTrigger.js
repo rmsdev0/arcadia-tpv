@@ -62,7 +62,7 @@ exports.handler = async function (context, event, callback) {
         const twiml = `
       <Response>
         <Say>This is an automated call from Arcadia Energy. Please hold while we connect you.</Say>
-        <Redirect>https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}/Flows/${studioFlow}?FlowEvent=trigger&fromEndpoint=true;</Redirect>
+        <Redirect>https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}/Flows/${studioFlow}?FlowEvent=trigger&amp;fromEndpoint=true</Redirect>
       </Response>
     `;
 
