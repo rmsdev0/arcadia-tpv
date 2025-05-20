@@ -60,7 +60,15 @@ exports.handler = async function(context, event, callback) {
         "CWDUAL": {
             "p1": "https://clearwaytpv.s3.amazonaws.com/Clearway+TPV+DUAL+Part+1.mp3",
             "p2": "https://clearwaytpv.s3.amazonaws.com/Clearway+TPV+DUAL+Part+2.mp3"
-        }
+        },
+        "PerchDUAL": {
+            "p1": "https://perchtpv.s3.us-east-1.amazonaws.com/PerchDUALPart1.mp3",
+            "p2": "https://perchtpv.s3.us-east-1.amazonaws.com/PerchDUALPart2.mp3"
+        },
+        "PerchHUCB": {
+            "p1": "https://perchtpv.s3.us-east-1.amazonaws.com/PerchHUCBPart1.mp3",
+            "p2": "https://perchtpv.s3.us-east-1.amazonaws.com/PerchHUCBPart2.mp3"
+        },
     }
 
     if (billingCode){
