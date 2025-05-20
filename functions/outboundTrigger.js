@@ -2,8 +2,8 @@
  *  create-call.js
  *
  *  This function:
- *   - Accepts phone, studio_flow, token, and optionally fromNumber via event parameters
- *   - Validates token against context.VALIDATOR
+ *   - Accepts phone, studioFlow, token, and optionally fromNumber via event parameters
+ *   - Validates token against context.validator
  *   - If valid, initiates an outbound call to `phone`
  *   - Uses `fromNumber` if provided, otherwise falls back to `context.TWILIO_NUMBER`
  *   - Says a greeting, then redirects to the given Studio Flow
@@ -11,9 +11,6 @@
  */
 
 exports.handler = async function (context, event, callback) {
-    // Let the function continue running after callback is invoked
-    context.callbackWaitsForEmptyEventLoop = false;
-
     // Create a new Twilio Response
     const response = new Twilio.Response();
 
@@ -22,18 +19,18 @@ exports.handler = async function (context, event, callback) {
 
     try {
         // Validate the token
-        const { phone, studio_flow, token, fromNumber } = event;
+        const { phone, studioFlow, token, fromNumber } = event;
 
-        if (!phone || !studio_flow || !token) {
+        if (!phone || !studioFlow || !token) {
             response.setStatusCode(400);
             response.setBody({
                 status: 'error',
-                message: 'Missing required parameters: phone, studio_flow, token'
+                message: 'Missing required parameters: phone, studioFlow, token'
             });
             return callback(null, response);
         }
 
-        if (token !== context.VALIDATOR) {
+        if (token !== context.valildator) {
             // Unauthorized
             response.setStatusCode(403);
             response.setBody({
@@ -65,7 +62,7 @@ exports.handler = async function (context, event, callback) {
         const twiml = `
       <Response>
         <Say>This is an automated call from Arcadia Energy. Please hold while we connect you.</Say>
-        <Redirect>https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}/Flows/${studio_flow}?FlowEvent=trigger&fromEndpoint=true</Redirect>
+        <Redirect>https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}/Flows/${studioFlow}?FlowEvent=trigger&fromEndpoint=true</Redirect>
       </Response>
     `;
 
