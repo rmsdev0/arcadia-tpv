@@ -15,6 +15,7 @@ exports.handler = async function(context, event, callback) {
         'ab': 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FW93af44db204fa69f0e842c8daa478666?FlowEvent=return',
         'nl': 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FW29fd7cca5c78c8a27f122bc0c73e0d9c?FlowEvent=return',
         'nv': 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FWb918841d5b0d426124e2818f9e37494f?FlowEvent=return',
+        'pr': 'https://webhooks.twilio.com/v1/Accounts/AC7826b283140e86185b8b15f9e71da0ce/Flows/FW3e9ac43de4f71ce2f23db168195696b9?FlowEvent=return'
     }
 
     let studioFlow = flowUrls['en']
