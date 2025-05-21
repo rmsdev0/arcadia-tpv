@@ -54,7 +54,7 @@ exports.handler = async function (context, event, callback) {
 
         const flowUrl =
             `https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}` +
-            `/Flows/${studioFlow}?FlowEvent=trigger`;
+            `/Flows/${studioFlow}?fromEndpoint=true`;
 
         twiml.redirect({ method: 'POST' }, flowUrl);
 
