@@ -1,96 +1,85 @@
 /**
- *  create-call.js
+ *  create-call.js (helper‑library version)
  *
- *  This function:
- *   - Accepts phone, studioFlow, token, and optionally fromNumber via event parameters
- *   - Validates token against context.validator
- *   - If valid, initiates an outbound call to `phone`
- *   - Uses `fromNumber` if provided, otherwise falls back to `context.TWILIO_NUMBER`
- *   - Says a greeting, then redirects to the given Studio Flow
- *   - Returns a success or error response as JSON
+ *  This Twilio Function:
+ *    • Accepts `phone`, `studioFlow`, `token`, and optional `fromNumber` in the POST body
+ *    • Validates `token` against `context.validator`
+ *    • Initiates an outbound call to `phone`
+ *        – Greets the callee with <Say>
+ *        – Redirects the live call into the specified Studio Flow
+ *    • Responds with JSON indicating success or failure
  */
 
 exports.handler = async function (context, event, callback) {
-    // Create a new Twilio Response
-    const response = new Twilio.Response();
-
-    // Ensure we return JSON in all cases
-    response.appendHeader('Content-Type', 'application/json');
+    // ---- prepare JSON response helper ----
+    const jsonResponse = (statusCode, payload) => {
+        const resp = new Twilio.Response();
+        resp.appendHeader('Content-Type', 'application/json');
+        resp.setStatusCode(statusCode);
+        resp.setBody(payload);
+        return resp;
+    };
 
     try {
-        // Validate the token
+        // Extract & basic validation
         const { phone, studioFlow, token, fromNumber } = event;
-
         if (!phone || !studioFlow || !token) {
-            response.setStatusCode(400);
-            response.setBody({
-                status: 'error',
-                message: 'Missing required parameters: phone, studioFlow, token'
-            });
-            return callback(null, response);
+            return callback(
+                null,
+                jsonResponse(400, {
+                    status: 'error',
+                    message: 'Missing required parameters: phone, studioFlow, token',
+                })
+            );
         }
 
         if (token !== context.validator) {
-            // Unauthorized
-            response.setStatusCode(403);
-            response.setBody({
-                status: 'error',
-                message: 'Invalid token provided.'
-            });
-            return callback(null, response);
+            return callback(
+                null,
+                jsonResponse(403, { status: 'error', message: 'Invalid token provided.' })
+            );
         }
 
-        // Token is valid; prepare to create an outbound call
+        // Build outbound call parameters
         const client = context.getTwilioClient();
+        const effectiveFrom = fromNumber && fromNumber.trim() !== '' ? fromNumber : context.TWILIO_NUMBER;
 
-        // Determine which number to use as 'from'
-        const effectiveFromNumber = fromNumber && fromNumber.trim() !== ''
-            ? fromNumber
-            : context.TWILIO_NUMBER; // todo this needs to be added in Twilio
+        // Generate TwiML with helper library (auto‑escapes &, <, >)
+        const VoiceResponse = Twilio.twiml.VoiceResponse;
+        const twiml = new VoiceResponse();
 
-        /**
-         *  We will use inline TwiML to:
-         *    - <Say> a greeting
-         *    - <Redirect> to the Studio Flow
-         *
-         *  The Studio Flow can be addressed by the URL pattern:
-         *    https://webhooks.twilio.com/v1/Accounts/{AccountSid}/Flows/{FlowSid}
-         *
-         *  We added "&fromEndpoint=true" so that the Studio Flow can know
-         *  this call is coming from your custom endpoint if desired.
-         */
-        const twiml = `
-      <Response>
-        <Say>This is an automated call from Arcadia Energy. Please hold while we connect you.</Say>
-        <Redirect>https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}/Flows/${studioFlow}?FlowEvent=trigger&amp;fromEndpoint=true</Redirect>
-      </Response>
-    `;
+        twiml.say(
+            'This is an automated call from Arcadia Energy. Please hold while we connect you.'
+        );
+
+        const flowUrl =
+            `https://webhooks.twilio.com/v1/Accounts/${context.ACCOUNT_SID}` +
+            `/Flows/${studioFlow}?FlowEvent=trigger&fromEndpoint=true`;
+
+        twiml.redirect({ method: 'POST' }, flowUrl);
 
         // Create the call
         const call = await client.calls.create({
             to: phone,
-            from: effectiveFromNumber,
-            twiml: twiml
+            from: effectiveFrom,
+            twiml: twiml.toString(),
         });
 
-        // 3. Send success response
-        response.setStatusCode(200);
-        response.setBody({
-            status: 'success',
-            callSid: call.sid,
-            fromNumber: effectiveFromNumber,
-            message: 'Outbound call initiated successfully.'
-        });
-        return callback(null, response);
-
-    } catch (error) {
-        // 4. Catch any errors and return a 500
-        console.error(error);
-        response.setStatusCode(500);
-        response.setBody({
-            status: 'error',
-            message: error.message
-        });
-        return callback(null, response);
+        // Return success JSON
+        return callback(
+            null,
+            jsonResponse(200, {
+                status: 'success',
+                callSid: call.sid,
+                fromNumber: effectiveFrom,
+                message: 'Outbound call initiated successfully.'
+            })
+        );
+    } catch (err) {
+        console.error('create‑call.js error:', err);
+        return callback(
+            null,
+            jsonResponse(500, { status: 'error', message: err.message })
+        );
     }
 };
