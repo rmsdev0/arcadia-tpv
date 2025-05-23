@@ -21,7 +21,6 @@ exports.handler = async function(context, event, callback) {
     let studioFlow = flowUrls['en']
 
     const billingUrls = {
-
         "UCB": {
             "p1": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+Part+1.mp3",
             "p2": "https://autotpvscriptrecordings.s3.amazonaws.com/H+UCB+Part+2.mp3"
