@@ -105,7 +105,8 @@ exports.handler = async function(context, event, callback) {
             reference_number: event.reference_number,
             date: fullDate,
             ivr_responses: ivrResponses,
-            call_duration: event.call_duration
+            call_duration: event.call_duration,
+            outboundCall: event.outboundCall || false,
         },
     };
     let custData = await axios
